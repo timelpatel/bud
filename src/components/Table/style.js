@@ -18,7 +18,7 @@ export const Th = styled.th`
   padding: 12px;
 `;
 
-export const Td = styled.th`
+export const Td = styled.td`
   text-align: left;
   padding: 12px;
 `;
