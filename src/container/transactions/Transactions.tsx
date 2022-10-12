@@ -5,18 +5,27 @@ import sortTenSmallest from "../../utils/sortTenSmallest";
 import { API_URL } from "../../consts";
 import useFetch from "../../hooks/useFetch";
 
-const Transactions = () => {
+export default function Transactions() {
+  interface Props {
+    amount: {
+      currency_iso: string;
+      value: string;
+    };
+    date: `${number}/${number}/${number}`;
+    description: string;
+  }
+
   const { data, error, loading } = useFetch(API_URL);
   const [sortedData, setSortedData] = useState(null);
   const [tableData, setTableData] = useState(null);
 
   const tableHeadings = [
-    { title: "Description", data: "description" },
-    { title: "Date", data: "date" },
-    { title: "Amount", data: "amount" },
+    { data: "description", title: "Description" },
+    { data: "date", title: "Date" },
+    { data: "amount", title: "Amount" },
   ];
 
-  function cleanTableData(data) {
+  function cleanTableData(data: Props[]) {
     let arr = [];
     let currency = "";
 
@@ -30,9 +39,9 @@ const Transactions = () => {
       }
 
       arr.push({
-        description: data[i].description,
-        date: formatDate(data[i].date),
         amount: `${currency} ${data[i].amount.value}`,
+        date: formatDate(data[i].date),
+        description: data[i].description,
       });
     }
 
@@ -63,5 +72,3 @@ const Transactions = () => {
     </>
   );
 };
-
-export default Transactions;

@@ -1,10 +1,12 @@
 import React from "react";
 import { WrapperContainer } from "./style";
 
-const Wrapper = ({ children }) => {
+interface Props {
+  children: JSX.Element
+}
+
+export default function Wrapper({ children }: Props) {
   return (
     <WrapperContainer>{children}</WrapperContainer>
   );
 }
-
-export default Wrapper;
