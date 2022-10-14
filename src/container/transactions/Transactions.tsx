@@ -6,7 +6,19 @@ import { API_URL } from "../../consts";
 import useFetch from "../../hooks/useFetch";
 
 export default function Transactions() {
-  interface Props {
+  const [showTransactions, setShowTransactions] = useState(true);
+
+  function buttonClick() {
+    setShowTransactions(!showTransactions);
+  }
+
+  interface IApi {
+    data: any;
+    error: boolean;
+    loading: boolean;
+  }
+
+  interface IProps {
     amount: {
       currency_iso: string;
       value: string;
@@ -15,9 +27,13 @@ export default function Transactions() {
     description: string;
   }
 
-  const { data, error, loading } = useFetch(API_URL);
+  let api: IApi | null = null;
   const [sortedData, setSortedData] = useState(null);
   const [tableData, setTableData] = useState(null);
+
+  if (!api) {
+    api = useFetch(API_URL);
+  }
 
   const tableHeadings = [
     { data: "description", title: "Description" },
@@ -25,7 +41,8 @@ export default function Transactions() {
     { data: "amount", title: "Amount" },
   ];
 
-  function cleanTableData(data: Props[]) {
+  function cleanTableData(data: IProps[]) {
+    console.log('cleanTableData')
     let arr = [];
     let currency = "";
 
@@ -46,11 +63,13 @@ export default function Transactions() {
     }
 
     return arr;
-  }
+  };
 
   useEffect(() => {
-    if (data) setSortedData(sortTenSmallest(data));
-  }, [data]);
+    if (api.data) {
+      setSortedData(sortTenSmallest(api.data));
+    }
+  }, [api.data]);
 
   useEffect(() => {
     if (sortedData) setTableData(cleanTableData(sortedData));
@@ -58,17 +77,21 @@ export default function Transactions() {
 
   return (
     <>
-      {loading && <p>Loading...</p>}
+      {api && api.loading && <p>Loading...</p>}
 
-      {error && <p>Failed to load transactions</p>}
+      {api && api.error && <p>Failed to load transactions</p>}
 
-      {!error && data && (
+      {api && api.data && !api.error && showTransactions && (
         <Table
           caption="10 smallest expenses"
           data={tableData}
           headings={tableHeadings}
         />
       )}
+
+      <br />
+      <br />
+      <button onClick={buttonClick}>Show / Hide</button>
     </>
   );
-};
+}
